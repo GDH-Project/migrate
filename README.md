@@ -24,12 +24,12 @@ DB_URL="postgresql://id:passwrd@host:port/db"
 make create user_trigger
 ```
 
-위 명령어를 실행하면 `migrations`경로에 `XXXXXX_user_tirgger_schema.down.sql, XXXXXX_user_tirgger_schema.up.sql` 2개 파일이 만들어 진다.
+위 명령어를 실행하면 `migrations`경로에 `XXXXXX_user_trigger_schema.down.sql, XXXXXX_user_trigger_schema.up.sql` 2개 파일이 만들어 진다.
 
 `*.up.sql` 파일에는 새로 생성될 SQL를 작성하면 된다.
 `*.down.sql` 파일에는 롤백시 적용할 SQL를 작성하면 된다.
 
-### make up | make up <마그레이션 갯수>
+### make up | make up <마이그레이션 갯수>
 
 > db에 마이그레이션을 진행하는 명령어이다.
 > 실패시 dirty 플래그가 지정된다.
@@ -65,7 +65,7 @@ make down 2
 
 ### make force <마이그레이션 파일 번호>
 
-> 강제로 현재 version을 특정 버전으로 변경하고 dirty플레그를 제거한다.
+> 강제로 현재 version을 특정 버전으로 변경하고 dirty 플래그를 제거한다.
 > 실제로 스키마가 변경되는게 아니기 때문에 down 실패시 발생한 오류는 직접 해결해야한다.
 
 000002_** 버전 sql로 버전 고정
