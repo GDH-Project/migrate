@@ -1,3 +1,4 @@
+DROP INDEX IF EXISTS device.idx_device_info_title;
 DROP INDEX IF EXISTS device.idx_device_info_update_cycle_id;
 DROP INDEX IF EXISTS device.idx_device_info_address_state_id_and_city_id;
 DROP INDEX IF EXISTS device.idx_device_info_address_state_id;

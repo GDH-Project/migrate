@@ -120,3 +120,5 @@ CREATE INDEX IF NOT EXISTS idx_device_info_address_state_id ON device.device_inf
 CREATE INDEX IF NOT EXISTS idx_device_info_address_state_id_and_city_id ON device.device_info (address_state_id, address_city_id);
 -- 장비 정보 검색 by UpdateCycleID
 CREATE INDEX IF NOT EXISTS idx_device_info_update_cycle_id ON device.device_info (update_cycle_id);
+-- 장비 정보 검색 by Title
+CREATE INDEX IF NOT EXISTS idx_device_info_title ON device.device_info (title);
