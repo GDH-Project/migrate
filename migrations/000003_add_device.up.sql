@@ -23,13 +23,15 @@ CREATE TABLE IF NOT EXISTS device.update_cycle (
 
 -- 센서 데이터 종류
 CREATE TABLE IF NOT EXISTS device.sensor (
-    id          SERIAL PRIMARY KEY,
-    title       VARCHAR(50) UNIQUE        NOT NULL,
-    description TEXT                      NOT NULL,
-    unit        VARCHAR(20),
+    id               SERIAL PRIMARY KEY,
+    title            VARCHAR(50) UNIQUE        NOT NULL,
+    eng_title        VARCHAR(50) UNIQUE        NOT NULL,
+    description      TEXT                      NOT NULL,
+    unit             VARCHAR(20),
+    unit_description TEXT,
 
-    created_at  TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    updated_at  TIMESTAMPTZ DEFAULT NOW() NOT NULL
+    created_at       TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at       TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS device.address_state (
