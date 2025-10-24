@@ -21,12 +21,12 @@ CREATE TABLE IF NOT EXISTS device.update_cycle (
     updated_at  TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
-
--- csv 의 헤더 모음
-CREATE TABLE IF NOT EXISTS device.csv_header (
+-- 센서 데이터 종류
+CREATE TABLE IF NOT EXISTS device.sensor (
     id          SERIAL PRIMARY KEY,
-    header      VARCHAR(50) UNIQUE        NOT NULL,
-    description TEXT,
+    title       VARCHAR(50) UNIQUE        NOT NULL,
+    description TEXT                      NOT NULL,
+    unit        VARCHAR(20),
 
     created_at  TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at  TIMESTAMPTZ DEFAULT NOW() NOT NULL
@@ -68,28 +68,28 @@ CREATE TABLE IF NOT EXISTS device.device_info (
     CONSTRAINT fk_address_city_id FOREIGN KEY (address_city_id) REFERENCES device.address_city (id) ON DELETE NO ACTION
 );
 
--- 장치의 req json key와 csv 헤더 바인딩 스키마 1:many (device : 해당 테이블)
-CREATE TABLE IF NOT EXISTS device.req_to_csv_header (
-    id            BIGSERIAL PRIMARY KEY,
-    key           VARCHAR(50)               NOT NULL,
-    device_id     UUID                      NOT NULL,
-    csv_header_id SERIAL                    NOT NULL,
+-- 장치의 req json key와 sensor 헤더 바인딩 스키마 1:many (device : 해당 테이블)
+CREATE TABLE IF NOT EXISTS device.req_to_sensor (
+    id         BIGSERIAL PRIMARY KEY,
+    key        VARCHAR(50)               NOT NULL,
+    device_id  UUID                      NOT NULL,
+    sensor_id  SERIAL                    NOT NULL,
 
-    created_at    TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    updated_at    TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
 
     CONSTRAINT fk_device_id FOREIGN KEY (device_id) REFERENCES device.device_info (id) ON DELETE NO ACTION,
-    CONSTRAINT fk_csv_header_id FOREIGN KEY (csv_header_id) REFERENCES device.csv_header (id) ON DELETE NO ACTION
+    CONSTRAINT fk_sensor_id FOREIGN KEY (sensor_id) REFERENCES device.sensor (id) ON DELETE NO ACTION
 );
 
 
 -- 디바이스에서 전송된 데이터 jsonb 파싱 테이블
 CREATE TABLE IF NOT EXISTS device.device_data (
-    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    device_id    UUID                           NOT NULL,
-    csv_raw_data JSONB                          NOT NULL,
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    device_id  UUID                           NOT NULL,
+    data       JSONB                          NOT NULL,
 
-    created_at   TIMESTAMPTZ      DEFAULT NOW() NOT NULL,
+    created_at TIMESTAMPTZ      DEFAULT NOW() NOT NULL,
 
     CONSTRAINT fk_device_id FOREIGN KEY (device_id) REFERENCES device.device_info (id) ON DELETE NO ACTION
 );
@@ -97,11 +97,11 @@ CREATE TABLE IF NOT EXISTS device.device_data (
 
 -- 디바이스에서 전송된 데이터 jsonb 파싱 후 캐싱 테이블 ( interval에 맞춰서 device.device_data 로 insert)
 CREATE TABLE IF NOT EXISTS device.device_data_temp (
-    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    device_id    UUID UNIQUE NOT NULL,
-    csv_raw_data JSONB       NOT NULL,
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    device_id  UUID UNIQUE NOT NULL,
+    data       JSONB       NOT NULL,
 
-    created_at   TIMESTAMPTZ      DEFAULT NOW(),
+    created_at TIMESTAMPTZ      DEFAULT NOW(),
 
     CONSTRAINT fk_device_id FOREIGN KEY (device_id) REFERENCES device.device_info (id) ON DELETE NO ACTION
 );
@@ -109,6 +109,6 @@ CREATE TABLE IF NOT EXISTS device.device_data_temp (
 
 -- 인덱스
 -- csv 파싱 헤더 검색 by deviceID
-CREATE INDEX IF NOT EXISTS idx_device_req_to_csv_header_device_id ON device.req_to_csv_header (device_id);
+CREATE INDEX IF NOT EXISTS idx_device_req_to_sensor_device_id ON device.req_to_sensor (device_id);
 -- 장비 데이터 겁색 by deviceID
 CREATE INDEX IF NOT EXISTS idx_device_device_data_device_id ON device.device_data (device_id);
