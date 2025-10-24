@@ -87,11 +87,9 @@ CREATE TABLE IF NOT EXISTS device.req_to_sensor (
 
 -- 디바이스에서 전송된 데이터 jsonb 파싱 테이블
 CREATE TABLE IF NOT EXISTS device.device_data (
-    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    device_id  UUID                           NOT NULL,
-    data       JSONB                          NOT NULL,
-
-    created_at TIMESTAMPTZ      DEFAULT NOW() NOT NULL,
+    time      TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    device_id UUID                      NOT NULL,
+    data      JSONB                     NOT NULL,
 
     CONSTRAINT fk_device_id FOREIGN KEY (device_id) REFERENCES device.device_info (id) ON DELETE NO ACTION
 );
@@ -99,11 +97,9 @@ CREATE TABLE IF NOT EXISTS device.device_data (
 
 -- 디바이스에서 전송된 데이터 jsonb 파싱 후 캐싱 테이블 ( interval에 맞춰서 device.device_data 로 insert)
 CREATE TABLE IF NOT EXISTS device.device_data_temp (
-    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    device_id  UUID UNIQUE NOT NULL,
-    data       JSONB       NOT NULL,
-
-    created_at TIMESTAMPTZ      DEFAULT NOW(),
+    time      TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    device_id UUID UNIQUE               NOT NULL,
+    data      JSONB                     NOT NULL,
 
     CONSTRAINT fk_device_id FOREIGN KEY (device_id) REFERENCES device.device_info (id) ON DELETE NO ACTION
 );
@@ -114,3 +110,11 @@ CREATE TABLE IF NOT EXISTS device.device_data_temp (
 CREATE INDEX IF NOT EXISTS idx_device_req_to_sensor_device_id ON device.req_to_sensor (device_id);
 -- 장비 데이터 겁색 by deviceID
 CREATE INDEX IF NOT EXISTS idx_device_device_data_device_id ON device.device_data (device_id);
+-- 장비 정보 검색 by Crop
+CREATE INDEX IF NOT EXISTS idx_device_info_crop_id ON device.device_info (crop_id);
+-- 장비 정보 검색 by UserID
+CREATE INDEX IF NOT EXISTS idx_device_info_user_id ON device.device_info (user_id);
+-- 장비 정보 검색 by AddressStateID
+CREATE INDEX IF NOT EXISTS idx_device_info_address_state_id ON device.device_info (address_state_id);
+-- 장비 정보 검색 by AddressStateID and AddressCityID
+CREATE INDEX IF NOT EXISTS idx_device_info_address_state_id ON device.device_info (address_state_id, address_city_id);

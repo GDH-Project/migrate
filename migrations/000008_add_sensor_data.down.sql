@@ -1,2 +1,2 @@
 DELETE
-FROM psql.device.sensor;
+FROM device.sensor;
