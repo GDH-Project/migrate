@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS device.api_key CASCADE;
